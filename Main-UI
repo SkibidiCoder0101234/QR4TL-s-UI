@@ -1,0 +1,192 @@
+local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
+
+if CoreGui:FindFirstChild("TestUI") then
+    CoreGui.TestUI:Destroy()
+end
+
+local uiVisible = true
+local mouseOverUI = false
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TestUI"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = CoreGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 500, 0, 400)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.ZIndex = 1
+frame.Active = true
+frame.Parent = screenGui
+
+local blocker = Instance.new("Frame")
+blocker.Size = UDim2.new(1, 0, 1, 0)
+blocker.Position = UDim2.new(0, 0, 0, 0)
+blocker.BackgroundTransparency = 1
+blocker.ZIndex = 2
+blocker.Active = true
+blocker.Parent = frame
+
+local dotCursorId = "rbxassetid://7072729990"
+frame.MouseEnter:Connect(function()
+    mouseOverUI = true
+    UserInputService.MouseIconEnabled = true
+    UserInputService.MouseIcon = dotCursorId
+end)
+
+frame.MouseLeave:Connect(function()
+    mouseOverUI = false
+    UserInputService.MouseIcon = ""
+end)
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 4)
+corner.Parent = frame
+
+local stroke = Instance.new("UIStroke")
+stroke.Thickness = 1.5
+stroke.Color = Color3.fromRGB(255, 255, 255)
+stroke.Parent = frame
+
+local topBarContainer = Instance.new("Frame")
+topBarContainer.Size = UDim2.new(1, 0, 0, 36)
+topBarContainer.BackgroundTransparency = 1
+topBarContainer.ClipsDescendants = true
+topBarContainer.Parent = frame
+
+local mask = Instance.new("Frame")
+mask.Size = UDim2.new(1, 0, 1, 0)
+mask.BackgroundTransparency = 1
+mask.ClipsDescendants = true
+mask.Parent = topBarContainer
+
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 2, 0)
+topBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+topBar.Parent = mask
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0, 100, 1, 0)
+title.Position = UDim2.new(0, 30, -0.24, 0)
+title.BackgroundTransparency = 1
+title.Text = "CTRL Hub"
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextColor3 = Color3.fromRGB(220, 220, 220)
+title.Font = Enum.Font.RobotoCondensed
+title.TextSize = 14
+title.Parent = topBar
+
+local topCorner = Instance.new("UICorner")
+topCorner.CornerRadius = UDim.new(0, 10)
+topCorner.Parent = topBar
+
+local topBarStroke = Instance.new("Frame")
+topBarStroke.Size = UDim2.new(1, 0, 0, 1)
+topBarStroke.Position = UDim2.new(0, 0, 1, -1)
+topBarStroke.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+topBarStroke.BorderSizePixel = 0
+topBarStroke.Parent = topBarContainer
+
+local line = Instance.new("Frame")
+line.Size = UDim2.new(0, 1, 1, 0)
+line.Position = UDim2.new(0, 112, 0, 0)
+line.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+line.BorderSizePixel = 0
+line.Parent = topBar
+
+local tabsContainer = Instance.new("Frame")
+tabsContainer.Size = UDim2.new(1, -128, 1, 0)
+tabsContainer.Position = UDim2.new(0, 128, 0, 0)
+tabsContainer.BackgroundTransparency = 1
+tabsContainer.Parent = topBar
+
+local tabNames = {"Home", "Settings", "Credits"}
+local padding = 10
+local xOffset = 0
+local activeTab = "Home"
+local tabButtons = {}
+
+for _, name in ipairs(tabNames) do
+    local tab = Instance.new("TextButton")
+    tab.Size = UDim2.new(0, 80, 1, -8)
+    tab.Position = UDim2.new(0, xOffset, 0, -14)
+    tab.BackgroundTransparency = 1
+    tab.Text = name
+    tab.TextColor3 = name == activeTab and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 180, 180)
+    tab.Font = Enum.Font.RobotoCondensed
+    tab.TextSize = 14
+    tab.Parent = tabsContainer
+
+    local underline = Instance.new("Frame")
+    underline.Size = UDim2.new(1, 0, 0, 2)
+    underline.Position = UDim2.new(0, 0, 1, -2)
+    underline.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    underline.Visible = name == activeTab
+    underline.Parent = tab
+
+    tab.MouseButton1Click:Connect(function()
+        activeTab = name
+        for _, b in pairs(tabButtons) do
+            b.TextColor3 = b.Text == name and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 180, 180)
+            b:FindFirstChildWhichIsA("Frame").Visible = b.Text == name
+        end
+    end)
+
+    table.insert(tabButtons, tab)
+    xOffset = xOffset + 80 + padding
+end
+
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.BackSlash then
+        uiVisible = not uiVisible
+        screenGui.Enabled = uiVisible
+        UserInputService.MouseIcon = ""
+        UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+    end
+end)
+
+local dragging = false
+local dragStart
+local startPos
+
+topBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+    end
+end)
+
+topBar.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+UserInputService.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 and uiVisible and mouseOverUI then
+        UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+    end
+end)
