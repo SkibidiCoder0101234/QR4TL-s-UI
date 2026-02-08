@@ -1,155 +1,192 @@
-local a,b,c=game.GetService,game,"CoreGui"
-local d=a(b)("UserInputService")
-if c:FindFirstChild("TestUI")then c.TestUI:Destroy()end
-local e,f=true,false
-local g=h or Instance.new
-local h=g("ScreenGui")
-h.Name="TestUI"
-h.ResetOnSpawn=false
-h.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
-h.Parent=c
-local i=g("Frame")
-i.Size=UDim2.new(0,500,0,400)
-i.AnchorPoint=Vector2.new(0.5,0.5)
-i.Position=UDim2.new(0.5,0,0.5,0)
-i.BackgroundColor3=Color3.fromRGB(40,40,40)
-i.ZIndex=1
-i.Active=true
-i.Parent=h
-local j=g("Frame")
-j.Size=UDim2.new(1,0,1,0)
-j.Position=UDim2.new(0,0,0,0)
-j.BackgroundTransparency=1
-j.ZIndex=2
-j.Active=true
-j.Parent=i
-local k="rbxassetid://7072729990"
-i.MouseEnter:Connect(function()
-f=true
-d.MouseIconEnabled=true
-d.MouseIcon=k
-end)
-i.MouseLeave:Connect(function()
-f=false
-d.MouseIcon=""
-end)
-local l=g("UICorner")
-l.CornerRadius=UDim.new(0,4)
-l.Parent=i
-local m=g("UIStroke")
-m.Thickness=1.5
-m.Color=Color3.fromRGB(255,255,255)
-m.Parent=i
-local n=g("Frame")
-n.Size=UDim2.new(1,0,0,36)
-n.BackgroundTransparency=1
-n.ClipsDescendants=true
-n.Parent=i
-local o=g("Frame")
-o.Size=UDim2.new(1,0,1,0)
-o.BackgroundTransparency=1
-o.ClipsDescendants=true
-o.Parent=n
-local p=g("Frame")
-p.Size=UDim2.new(1,0,2,0)
-p.BackgroundColor3=Color3.fromRGB(30,30,30)
-p.Parent=o
-local q=g("TextLabel")
-q.Size=UDim2.new(0,100,1,0)
-q.Position=UDim2.new(0,30,-0.24,0)
-q.BackgroundTransparency=1
-q.Text="CTRL Hub"
-q.TextXAlignment=Enum.TextXAlignment.Left
-q.TextColor3=Color3.fromRGB(220,220,220)
-q.Font=Enum.Font.RobotoCondensed
-q.TextSize=14
-q.Parent=p
-local r=g("UICorner")
-r.CornerRadius=UDim.new(0,10)
-r.Parent=p
-local s=g("Frame")
-s.Size=UDim2.new(1,0,0,1)
-s.Position=UDim2.new(0,0,1,-1)
-s.BackgroundColor3=Color3.fromRGB(255,255,255)
-s.BorderSizePixel=0
-s.Parent=n
-local t=g("Frame")
-t.Size=UDim2.new(0,1,1,0)
-t.Position=UDim2.new(0,112,0,0)
-t.BackgroundColor3=Color3.fromRGB(255,255,255)
-t.BorderSizePixel=0
-t.Parent=p
-local u=g("Frame")
-u.Size=UDim2.new(1,-128,1,0)
-u.Position=UDim2.new(0,128,0,0)
-u.BackgroundTransparency=1
-u.Parent=p
-local v={"Home","Settings","Credits"}
-local w=10
-local x=0
-local y="Home"
-local z={}
-for _,A in ipairs(v)do
-local B=g("TextButton")
-B.Size=UDim2.new(0,80,1,-8)
-B.Position=UDim2.new(0,x,0,-14)
-B.BackgroundTransparency=1
-B.Text=A
-B.TextColor3=A==y and Color3.fromRGB(255,255,255) or Color3.fromRGB(180,180,180)
-B.Font=Enum.Font.RobotoCondensed
-B.TextSize=14
-B.Parent=u
-local C=g("Frame")
-C.Size=UDim2.new(1,0,0,2)
-C.Position=UDim2.new(0,0,1,-2)
-C.BackgroundColor3=Color3.fromRGB(255,255,255)
-C.Visible=A==y
-C.Parent=B
-B.MouseButton1Click:Connect(function()
-y=A
-for _,D in pairs(z)do
-D.TextColor3=D.Text==A and Color3.fromRGB(255,255,255) or Color3.fromRGB(180,180,180)
-D:FindFirstChildWhichIsA("Frame").Visible=D.Text==A
+local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
+
+if CoreGui:FindFirstChild("TestUI") then
+    CoreGui.TestUI:Destroy()
 end
+
+local uiVisible = true
+local mouseOverUI = false
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TestUI"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = CoreGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 500, 0, 400)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.ZIndex = 1
+frame.Active = true
+frame.Parent = screenGui
+
+local blocker = Instance.new("Frame")
+blocker.Size = UDim2.new(1, 0, 1, 0)
+blocker.Position = UDim2.new(0, 0, 0, 0)
+blocker.BackgroundTransparency = 1
+blocker.ZIndex = 2
+blocker.Active = true
+blocker.Parent = frame
+
+local dotCursorId = "rbxassetid://7072729990"
+frame.MouseEnter:Connect(function()
+    mouseOverUI = true
+    UserInputService.MouseIconEnabled = true
+    UserInputService.MouseIcon = dotCursorId
 end)
-table.insert(z,B)
-x=x+80+w
-end
-d.InputBegan:Connect(function(E)
-if E.KeyCode==Enum.KeyCode.BackSlash then
-e=not e
-h.Enabled=e
-d.MouseIcon=""
-d.MouseBehavior=Enum.MouseBehavior.Default
-end
+
+frame.MouseLeave:Connect(function()
+    mouseOverUI = false
+    UserInputService.MouseIcon = ""
 end)
-local F=false
-local G,H
-p.InputBegan:Connect(function(E)
-if E.UserInputType==Enum.UserInputType.MouseButton1 then
-F=true
-G=E.Position
-H=i.Position
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 4)
+corner.Parent = frame
+
+local stroke = Instance.new("UIStroke")
+stroke.Thickness = 1.5
+stroke.Color = Color3.fromRGB(255, 255, 255)
+stroke.Parent = frame
+
+local topBarContainer = Instance.new("Frame")
+topBarContainer.Size = UDim2.new(1, 0, 0, 36)
+topBarContainer.BackgroundTransparency = 1
+topBarContainer.ClipsDescendants = true
+topBarContainer.Parent = frame
+
+local mask = Instance.new("Frame")
+mask.Size = UDim2.new(1, 0, 1, 0)
+mask.BackgroundTransparency = 1
+mask.ClipsDescendants = true
+mask.Parent = topBarContainer
+
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 2, 0)
+topBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+topBar.Parent = mask
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0, 100, 1, 0)
+title.Position = UDim2.new(0, 30, -0.24, 0)
+title.BackgroundTransparency = 1
+title.Text = "CTRL Hub"
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextColor3 = Color3.fromRGB(220, 220, 220)
+title.Font = Enum.Font.RobotoCondensed
+title.TextSize = 14
+title.Parent = topBar
+
+local topCorner = Instance.new("UICorner")
+topCorner.CornerRadius = UDim.new(0, 10)
+topCorner.Parent = topBar
+
+local topBarStroke = Instance.new("Frame")
+topBarStroke.Size = UDim2.new(1, 0, 0, 1)
+topBarStroke.Position = UDim2.new(0, 0, 1, -1)
+topBarStroke.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+topBarStroke.BorderSizePixel = 0
+topBarStroke.Parent = topBarContainer
+
+local line = Instance.new("Frame")
+line.Size = UDim2.new(0, 1, 1, 0)
+line.Position = UDim2.new(0, 112, 0, 0)
+line.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+line.BorderSizePixel = 0
+line.Parent = topBar
+
+local tabsContainer = Instance.new("Frame")
+tabsContainer.Size = UDim2.new(1, -128, 1, 0)
+tabsContainer.Position = UDim2.new(0, 128, 0, 0)
+tabsContainer.BackgroundTransparency = 1
+tabsContainer.Parent = topBar
+
+local tabNames = {"Home", "Settings", "Credits"}
+local padding = 10
+local xOffset = 0
+local activeTab = "Home"
+local tabButtons = {}
+
+for _, name in ipairs(tabNames) do
+    local tab = Instance.new("TextButton")
+    tab.Size = UDim2.new(0, 80, 1, -8)
+    tab.Position = UDim2.new(0, xOffset, 0, -14)
+    tab.BackgroundTransparency = 1
+    tab.Text = name
+    tab.TextColor3 = name == activeTab and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 180, 180)
+    tab.Font = Enum.Font.RobotoCondensed
+    tab.TextSize = 14
+    tab.Parent = tabsContainer
+
+    local underline = Instance.new("Frame")
+    underline.Size = UDim2.new(1, 0, 0, 2)
+    underline.Position = UDim2.new(0, 0, 1, -2)
+    underline.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    underline.Visible = name == activeTab
+    underline.Parent = tab
+
+    tab.MouseButton1Click:Connect(function()
+        activeTab = name
+        for _, b in pairs(tabButtons) do
+            b.TextColor3 = b.Text == name and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 180, 180)
+            b:FindFirstChildWhichIsA("Frame").Visible = b.Text == name
+        end
+    end)
+
+    table.insert(tabButtons, tab)
+    xOffset = xOffset + 80 + padding
 end
+
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.BackSlash then
+        uiVisible = not uiVisible
+        screenGui.Enabled = uiVisible
+        UserInputService.MouseIcon = ""
+        UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+    end
 end)
-p.InputEnded:Connect(function(E)
-if E.UserInputType==Enum.UserInputType.MouseButton1 then
-F=false
-end
+
+local dragging = false
+local dragStart
+local startPos
+
+topBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+    end
 end)
-d.InputChanged:Connect(function(E)
-if F and E.UserInputType==Enum.UserInputType.MouseMovement then
-local I=E.Position-G
-i.Position=UDim2.new(H.X.Scale,H.X.Offset+I.X,H.Y.Scale,H.Y.Offset+I.Y)
-end
+
+topBar.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
 end)
-d.InputBegan:Connect(function(E)
-if E.UserInputType==Enum.UserInputType.MouseButton2 and e and f then
-d.MouseBehavior=Enum.MouseBehavior.Default
-end
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
 end)
-d.InputEnded:Connect(function(E)
-if E.UserInputType==Enum.UserInputType.MouseButton2 then
-d.MouseBehavior=Enum.MouseBehavior.Default
-end
+
+UserInputService.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 and uiVisible and mouseOverUI then
+        UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+    end
 end)
