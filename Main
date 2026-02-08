@@ -71,7 +71,7 @@ topBar.Parent = mask
 
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(0, 100, 1, 0)
-title.Position = UDim2.new(0, 30, -0.24, 0)
+title.Position = UDim2.new(0, 27, -0.25, 0)
 title.BackgroundTransparency = 1
 title.Text = "QR4TL Hub"
 title.TextXAlignment = Enum.TextXAlignment.Left
